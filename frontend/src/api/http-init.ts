@@ -196,10 +196,6 @@ export async function httpRequest(
   return { ok: true, status: res.status, statusText: res.statusText, data: parsed };
 }
 
-export function withBasePath(path: string): string {
-  return basePathPrefix + path;
-}
-
 export function setupHttp(): void {
   let basePath: string | null | undefined = window.X_UI_BASE_PATH;
   if (!basePath) {
