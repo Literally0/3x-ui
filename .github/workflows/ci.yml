@@ -10,6 +10,7 @@ on:
       - ".nvmrc"
       - "Makefile"
       - ".github/workflows/ci.yml"
+      - ".github/scripts/sync-upstream*.sh"
   push:
     branches:
       - main
@@ -21,11 +22,19 @@ on:
       - ".nvmrc"
       - "Makefile"
       - ".github/workflows/ci.yml"
+      - ".github/scripts/sync-upstream*.sh"
 
 permissions:
   contents: read
 
 jobs:
+  sync-upstream-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test sync-upstream.sh
+        run: bash .github/scripts/sync-upstream.test.sh
+
   go-test:
     runs-on: ubuntu-latest
     steps:

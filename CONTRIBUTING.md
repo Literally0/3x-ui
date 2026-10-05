@@ -288,6 +288,10 @@ CI runs this for you nightly (and on demand) via `.github/workflows/mutation.yml
 
 `.github/workflows/ci.yml` runs per PR: `go-test` (with `-shuffle -count=1`), a `race` job (`-race -shuffle -count=1`), a `fuzz-smoke` job on the critical parsers, and the frontend `typecheck`/`lint`/`format:check`/`test`/`build`/`build-storybook`. Snapshots are regression guards — regenerate them (`npx vitest run -u`) only for intentional output changes, never to make a red test green.
 
+### Upstream sync (fork only)
+
+`.github/workflows/sync-upstream.yml` merges `MHSanaei/3x-ui` `main` into the fork every 6 hours up to the first conflicting commit (opening an "Upstream sync blocked" issue) and mirrors new upstream `v*.*.*` tags. It needs a repo secret `SYNC_TOKEN`: a personal access token with the `repo` and `workflow` scopes (`gh secret set SYNC_TOKEN`). Without it the job fails fast. `.github/scripts/sync-upstream.test.sh` covers clean merge, tag placement, conflict cutoff, idempotent rerun and resume; CI runs it.
+
 ## Sending a pull request
 
 1. Branch off `main` (e.g. `feat/short-description`).
