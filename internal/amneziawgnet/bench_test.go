@@ -30,8 +30,8 @@ func BenchmarkStackTunWrite(b *testing.B) {
 
 	b.SetBytes(int64(len(packet)))
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		if _, err := tun.Write(bufs, 0); err != nil {
 			b.Fatalf("Write: %v", err)
 		}
@@ -48,8 +48,8 @@ func BenchmarkStackTunRead(b *testing.B) {
 
 	b.SetBytes(int64(len(packet)))
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		tun.incomingPacket <- buffer.NewViewWithData(packet)
 		if _, err := tun.Read(buf, sizes, 0); err != nil {
 			b.Fatalf("Read: %v", err)
@@ -76,8 +76,8 @@ func BenchmarkUDPDatagramDelivery(b *testing.B) {
 
 	b.SetBytes(int64(len(payload)))
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		if _, err := st.Write(bufs, 0); err != nil {
 			b.Fatalf("Write: %v", err)
 		}
