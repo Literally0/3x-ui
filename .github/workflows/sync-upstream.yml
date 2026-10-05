@@ -1,0 +1,41 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    if: github.repository != 'MHSanaei/3x-ui'
+    runs-on: ubuntu-latest
+    steps:
+      # A PAT (repo + workflow scopes) is required: GITHUB_TOKEN cannot push
+      # workflow-file changes, and its pushes would not trigger CI or Release.
+      - name: Require SYNC_TOKEN
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [[ -z "$SYNC_TOKEN" ]]; then
+            echo "::error::Add a repo+workflow scoped PAT as the SYNC_TOKEN secret"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - name: Merge upstream and mirror tags
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: bash .github/scripts/sync-upstream.sh
